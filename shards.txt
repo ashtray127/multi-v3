@@ -1,0 +1,12 @@
+SHARD DATA - 1 value just means it's stored in shard.data
+
+SET_DATA_VALUE:
+    - client_id: string
+    - key: string
+    - value: any
+
+CREATE_INPUT:
+    - input_key (inputs.txt)
+
+SET_ID:
+    - id_string

@@ -1,0 +1,8 @@
+Input Values:
+    - RIGHT_MOUSE
+    - LEFT_MOUSE
+    - MIDDLE_MOUSE
+
+    - W_KEY
+    - A_KEY
+    etc...

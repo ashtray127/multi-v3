@@ -1,0 +1,4 @@
+INIT_PACKET: (All seperate shards)
+    - All the data values to set 
+    - All the inputs to set 
+    - The client id (one shard)

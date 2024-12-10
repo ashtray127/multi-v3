@@ -1,0 +1,5 @@
+Functions: camelCase
+Variables: snake_case
+Classes: PascalCase
+Types: PascalCase
+Enums: Pascal_Snake
