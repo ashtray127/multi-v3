@@ -1,17 +1,18 @@
 import { Packet, Shard, Shard_Types } from './types';
 import { WebSocketServer } from 'ws';
 
-interface Server {
+export interface Server {
     wss: WebSocketServer
     client_data: {[key: string]: any}
-    inputs: string[]
+    inputs: {[key: string]: Function}
+    server: Server
 }
 
 export function ServerBuilder(
-    this: Server,
+    this: any,
     port: number,
     client_data: {[key: string]: any},
-    inputs: string[]
+    inputs: {[key: string]: Function}
 
 ) {
     this.wss = new WebSocketServer({ port: port })
@@ -42,16 +43,16 @@ export function ServerBuilder(
 
         let init_packet: Packet = [];
 
-        for (let client_id in this.client_data) {
+        for (let client_id in server.client_data) {
 
-            for (let key in this.client_data[client_id]) {
+            for (let key in server.client_data[client_id]) {
 
                 init_packet.push({
                     type: Shard_Types.SET_DATA_VALUE,
                     data: {
                         client_id: client_id,
                         key: key,
-                        value: this.client_data[client_id][key]
+                        value: server.client_data[client_id][key]
                     }
                 });
 
@@ -59,7 +60,7 @@ export function ServerBuilder(
 
         }
 
-        for (let input of this.inputs) {
+        for (let input in server.inputs) {
             init_packet.push({
                 type: Shard_Types.CREATE_INPUT,
                 data: input
@@ -82,6 +83,7 @@ export function ServerBuilder(
                     continue;
                 }
 
+                server = server.inputs[shard.data.input_id](server, shard.data.value);
 
             }
         })
@@ -92,5 +94,5 @@ export function ServerBuilder(
     })
 
 
-    return this;
+    return server;
 }

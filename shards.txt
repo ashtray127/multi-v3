@@ -10,3 +10,7 @@ CREATE_INPUT:
 
 SET_ID:
     - id_string
+
+INPUT_VALUE:
+    - input_id: string
+    - value: bool
