@@ -1,5 +1,5 @@
 import { ServerBuilder } from "../lib/server";
-var serv = ServerBuilder(8080, {
+ServerBuilder(8080, {
     player_1: {
         connected: false,
         pos: { x: 0, y: 0 }
@@ -9,10 +9,16 @@ var serv = ServerBuilder(8080, {
         pos: { x: 0, y: 0 }
     }
 }, {
-    "W_KEY": function (server, val) {
+    "W_KEY": function (server, id, val) {
+        if (val) {
+            server.client_data[id].pos.y--;
+        }
         return server;
     },
-    "S_KEY": function (server, val) {
+    "S_KEY": function (server, id, val) {
+        if (val) {
+            server.client_data[id].pos.y++;
+        }
         return server;
     }
 });

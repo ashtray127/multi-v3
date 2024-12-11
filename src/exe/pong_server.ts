@@ -1,7 +1,7 @@
 import { ServerBuilder } from "../lib/server";
 import type { Server } from "../lib/server";
 
-let serv: Server = ServerBuilder(
+ServerBuilder(
     8080,
     {
         player_1: {
@@ -14,10 +14,16 @@ let serv: Server = ServerBuilder(
         }
     },
     {
-        "W_KEY": (server: Server, val: boolean) => {
+        "W_KEY": (server: Server, id: string, val: boolean) => {
+            if (val) {
+                server.client_data[id].pos.y--;
+            }
             return server;
         },
-        "S_KEY": (server: Server, val: boolean) => {
+        "S_KEY": (server: Server, id: string, val: boolean) => {
+            if (val) {
+                server.client_data[id].pos.y++;
+            }
             return server;
         }
     }

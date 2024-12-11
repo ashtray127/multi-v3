@@ -14,6 +14,7 @@ export function ServerBuilder(port, client_data, inputs) {
             id = cli_id;
             server.client_data[cli_id].connected = true;
             full = false;
+            break;
         }
         if (full) {
             ws.close(1001, "The server is full!");
@@ -40,6 +41,11 @@ export function ServerBuilder(port, client_data, inputs) {
         }
         var raw_init_packet = JSON.stringify(init_packet);
         ws.send(raw_init_packet);
+        ws.addEventListener('error', console.error);
+        ws.addEventListener('close', function (cls) {
+            server.client_data[id].connected = false;
+            console.log("Client", id, " disconnected!");
+        });
         ws.addEventListener('message', function (msg) {
             var raw_packet = msg.data;
             var packet = JSON.parse(raw_packet);
@@ -49,8 +55,27 @@ export function ServerBuilder(port, client_data, inputs) {
                     console.error("Client gave invalid shard!");
                     continue;
                 }
-                server = server.inputs[shard.data.input_id](server, shard.data.value);
+                if (!(Object.keys(server.inputs).includes(shard.data.input_id))) {
+                    console.error("Input ID", shard.data.input_id, "is not a valid input ID!");
+                    continue;
+                }
+                server = server.inputs[shard.data.input_id](server, id, shard.data.value);
             }
+            var data_packet = [];
+            for (var client_id in server.client_data) {
+                for (var key in server.client_data[client_id]) {
+                    data_packet.push({
+                        type: Shard_Types.SET_DATA_VALUE,
+                        data: {
+                            client_id: client_id,
+                            key: key,
+                            value: server.client_data[client_id][key]
+                        }
+                    });
+                }
+            }
+            var raw_data_packet = JSON.stringify(data_packet);
+            ws.send(raw_data_packet);
         });
     });
     return server;
